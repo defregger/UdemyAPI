@@ -21,36 +21,94 @@ servers:
 paths: 
   /v1/customers:
     get:
+      summary: List of Customers
+      description: Get a list all customers in the system.
+      tags:
+        - Customers
+      operationId: listCustomerV1
       parameters:
-        - name: pageNumber
-          in: query
-          description: Page Number
-          schema:
-            type: integer
-            format: int32
-            default: 1
-        - name: pageSize
-          in: query
-          description: Page Size
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 25
+        - $ref: "#/components/parameters/PageNumberPara"
+        - $ref: "#/components/parameters/PageSizePara"
       responses:
         '200':
           description: List of Customers
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomerPagedList"
-                    
-               
+                $ref: "#/components/schemas/CustomerPagedList"          
+    post:
+      summary: New Customer
+      description: Create a new customer
+      tags:
+        - Customer
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+      responses:
+        '201':
+          description: Customer Created
+
+
+  /v1/customers/{customerID}:
+    get:
+      summary: Get Customer By ID
+      description: Get a single **Customer** by it's Id value.
+      tags:
+        - Customers
+      operationId: getCustomerByIdV1
+      parameters:
+        - name: customerID
+          in: path
+          description: Customer ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found Customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+
+  /v1/beers/{beerID}:
+    get:
+      summary: Get Beer By ID
+      description: Get a single **Beer** by it's Id value
+      tags:
+        - Beers
+      operationId: getBeersByIdV1
+      parameters:
+        - name: beerID
+          in: path
+          description: Beer ID
+          required: true
+          schema:
+            type: string
+            format: uiid
+      responses:
+        '200':
+          description: Found Beer ID
+          content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/BeersObject"
+
+
   /v1/beers:
     get:
+      summary: List of Beers
+      description: Get a list all beers in the system.
+      tags:
+        - Beers
+      operationId: listBeersV1
       parameters:
-        $ref: "#/components/parameters/PageNamePara"
-     
+        - $ref: "#/components/parameters/PageNumberPara"
+        - $ref: "#/components/parameters/PageSizePara"
         
 
       responses:
@@ -60,13 +118,6 @@ paths:
             application/jason:
               schema:
                 $ref: "#/components/schemas/BeerPagedList"
-                
-                  
-
-                          
-                  
-                  
-                
         '404':
           description: Not Beers found
   
@@ -161,8 +212,7 @@ components:
         - $ref: "#/components/schemas/PagedResponse"
       properties:
         content:
-          $ref: "#/components/schemas/CustomerList"
-    
+          $ref: "#/components/schemas/CustomerList"   
     PagedResponse:
       type: object
       properties:
@@ -216,8 +266,7 @@ components:
           type: boolean
           
   parameters:
-    PageNamePara:
-      type: arr
+    PageNumberPara:
       name: pageNumber
       in: query
       description: Page Number
